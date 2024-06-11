@@ -1,23 +1,20 @@
 # HDL-L
-The local version of high-definition likelihood inference of genetic correlations (HDL-L)
----
-title: "Local heritability and genetic correlation"
-author: "YuyingLi"
-date: "4/17/2024"
-output: github_document
----
+HDL-L is the local version of high-definition likelihood (HDL) (https://github.com/zhenin/HDL). It can estimate local heritability and local genetic correlation.
+Traditional global approaches focus on the average genetic correlation across the entire genome, potentially missing localized genetic signals or those with opposite directions at different loci. We have introduced a full likelihood-based method, HDL-L, to estimate local genetic correlations with high efficiency.
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+Here we provide a tutorial for the application of HDL-L together with real examples.
+## Installation 
+HDL-L can be installed directly from GitHub using the following command;
+```R
+install.packages("remotes")
+remotes::install_github("YuyingLi-X/HDL-L")
 ```
 
-Now we have extended HDL into local version, you can estimate local heritability and local genetic correlation by using HDL-L. Here is a step-by-step tutorial:
-
 ## Step1: Reference panel and local region definition
-As same as HDL, we already prepare the pre-computed reference panel and LD for each region of the European-ancestry population. You can download it here. (Add link later)
+As same as HDL, we already prepared the pre-computed reference panel and LD for each region of the European-ancestry population. You can download it from Zenodo (https://doi.org/10.5281/zenodo.11001214).
 ```{r eval=FALSE}
 In the "LD.path", it includes 
-1. All LD files, eigen vectors and eigen matrixs for all local regions, end by "_LDSVD.rda"
+1. All LD files, eigen vectors, and eigen matrixes for all local regions, end by "_LDSVD.rda"
 2. Snps information in each local region: "UKB_snp_counter_imputed.RData" and "UKB_snp_list_imputed_vector.RData". 
 
 In the "bim.path", it includes all bim files for local regions, which helps to clean the summary statistics data and check if there are multiallelic or duplicated SNPs
