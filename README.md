@@ -2,12 +2,13 @@
 HDL-L is the local version of high-definition likelihood (HDL) (https://github.com/zhenin/HDL). It can estimate local heritability and local genetic correlation.
 Traditional global approaches focus on the average genetic correlation across the entire genome, potentially missing localized genetic signals or those with opposite directions at different loci. We have introduced a full likelihood-based method, HDL-L, to estimate local genetic correlations with high efficiency.
 
-Here we provide a tutorial for the application of HDL-L together with real examples.
+Here we provide a step-by-step tutorial for HDL-L and a real example at the end.
+
 ## Installation 
-HDL-L can be installed directly from GitHub using the following command;
-```R
-install.packages("remotes")
-remotes::install_github("YuyingLi-X/HDL-L")
+HDL-L can be cloned from GitHub using the following command;
+```bash
+git clone https://github.com/YuyingLi-X/HDL-L
+cd HDL-L
 ```
 
 ## Step1: Reference panel and local region definition
@@ -18,7 +19,6 @@ In the "LD.path", it includes
 2. Snps information in each local region: "UKB_snp_counter_imputed.RData" and "UKB_snp_list_imputed_vector.RData". 
 
 In the "bim.path", it includes all bim files for local regions, which helps to clean the summary statistics data and check if there are multiallelic or duplicated SNPs
-
 ```
 
 ## Step2: The format of summary statistics
@@ -56,6 +56,8 @@ GWAS.type=UKB.Neale \
 output.file=/Path/to/gwas/gwas1 \
 log.file=/Path/to/log/gwas1
 ```
+
+
 
 ## Step 3: Running HDL.L on Each Region
 
