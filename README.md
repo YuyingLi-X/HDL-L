@@ -2,7 +2,7 @@
 HDL-L is the local version of high-definition likelihood (HDL) (https://github.com/zhenin/HDL). It can estimate local heritability and local genetic correlation.
 Traditional global approaches focus on the average genetic correlation across the entire genome, potentially missing localized genetic signals or those with opposite directions at different loci. We have introduced a full likelihood-based method, HDL-L, to estimate local genetic correlations with high efficiency.
 
-Here we provide a step-by-step tutorial for HDL-L and a real example at the end.
+Here, we provide a step-by-step tutorial for HDL-L and a real example at the end.
 
 ## Installation 
 HDL-L can be cloned from GitHub using the following command;
@@ -11,17 +11,17 @@ git clone https://github.com/YuyingLi-X/HDL-L
 cd HDL-L
 ```
 
-## Step1: Reference panel and local region definition
-As same as HDL, we already prepared the pre-computed reference panel and LD for each region of the European-ancestry population. You can download it from Zenodo (https://doi.org/10.5281/zenodo.11001214).
+## Step 1: Reference panel and local region definition
+As with HDL, we already prepared the pre-computed reference panel and LD for each region of the European-ancestry population. You can download it from Zenodo (https://doi.org/10.5281/zenodo.11001214).
 ```{r eval=FALSE}
 In the "LD.path", it includes 
-1. All LD files, eigen vectors, and eigen matrixes for all local regions, end by "_LDSVD.rda"
+1. All LD files, eigenvectors, and eigen matrixes for all local regions, end by "_LDSVD.rda"
 2. Snps information in each local region: "UKB_snp_counter_imputed.RData" and "UKB_snp_list_imputed_vector.RData". 
 
 In the "bim.path", it includes all bim files for local regions, which helps to clean the summary statistics data and check if there are multiallelic or duplicated SNPs
 ```
 
-## Step2: The format of summary statistics
+## Step 2: The format of summary statistics
 The input data file should include the following columns:  
 - `SNP`: SNP ID  
 - `A1`: Effect allele  
@@ -33,9 +33,9 @@ If `Z` is not available, alternatively, you may provide:
 - `b`: Estimate of marginal effect in GWAS  
 - `se`: Standard error of the estimates of marginal effects in GWAS  
 
-If the GWAS is based on logistic regression, `b` should be the logarithm of OR (odds ratio) and `se` is the standard error of log(OR). 
+If the GWAS is based on logistic regression, `b` should be the logarithm of OR (odds ratio), and `se` is the standard error of log(OR). 
 
-The summary statistics should look like this (b and se can be absent in this example since Z is available):
+The summary statistics should look like (b and se can be absent in this example since Z is available):
 
 ```{r eval=FALSE}
 ##          SNP A1 A2      N        b       se      Z
@@ -77,7 +77,7 @@ Alternatively, if `Z` is not provided, you may include:
 - `se`: Standard error of the estimates of marginal effects in GWAS.
 
 2. **gwas2.df**
-The second formatted summary statistics data, the columns should be the same as `gwas1.df`.
+For the second formatted summary statistics data, the columns should be the same as `gwas1.df`.
 
 3. **Trait1name**
 The trait name for **gwas1.df**.
@@ -92,7 +92,7 @@ Path to the directory where the decompressed LD.path.zip file is stored.
 Path to the directory where the decompressed bim.path.zip file is stored.
 
 7. **Nref**
-Sample size of the reference sample where LD is computed. If the default UK Bio bank reference sample is used, Nref = 335272.
+Sample size of the reference sample where LD is computed. If the default UK Biobank reference sample is used, Nref = 335272.
 
 8. **N0**
 Number of individuals included in both cohorts.
@@ -156,7 +156,7 @@ save.path=/Path/to/save/result/
 
 ```
 
-If you only want to run on specific region, you can run this command
+If you only want to run on a specific region, you can run this command
 ```{bash eval=FALSE}
 Rscript /Path/to/HDL/HDL.L.run.R \
 gwas1.df=/Path/to/gwas/gwas1.hdl.rds \
