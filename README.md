@@ -13,13 +13,13 @@ cd HDL-L
 
 ## Step 1: Reference panel and local region definition
 As with HDL, we already prepared the pre-computed reference panel and LD for each region of the European-ancestry population. You can download it from Zenodo (https://doi.org/10.5281/zenodo.11001214).
-```{r eval=FALSE}
+
 In the "LD.path", it includes 
 1. All LD files, eigenvectors, and eigen matrixes for all local regions, end by "_LDSVD.rda"
 2. Snps information in each local region: "UKB_snp_counter_imputed.RData" and "UKB_snp_list_imputed_vector.RData". 
 
 In the "bim.path", it includes all bim files for local regions, which helps to clean the summary statistics data and check if there are multiallelic or duplicated SNPs
-```
+
 
 ## Step 2: The format of summary statistics
 The input data file should include the following columns:  
@@ -37,7 +37,7 @@ If the GWAS is based on logistic regression, `b` should be the logarithm of OR (
 
 The summary statistics should look like (b and se can be absent in this example since Z is available):
 
-```{r eval=FALSE}
+```R
 ##          SNP A1 A2      N        b       se      Z
 ## 1  rs3131962  G  A 205475 0.001004 0.004590 0.2187
 ## 2 rs12562034  A  G 205475 0.005382 0.005011 1.0740
@@ -47,8 +47,8 @@ The summary statistics should look like (b and se can be absent in this example 
 ## 6  rs4970383  A  C 205475 0.004685 0.003582 1.3080
 ```
 
-You can use HDL.L.data.wrangling.R to do data wrangling using commands
-```{bash eval=FALSE}
+You can use `HDL.L.data.wrangling.R` to do data wrangling for data from [the Neale Lab round 2 GWAS of UK Biobank](https://docs.google.com/spreadsheets/d/1kvPoupSzsSFBNSztMzl04xMoSC3Kcx3CrjVf4yBmESU/edit?ts=5b5f17db#gid=227859291) using commands.
+```bash
 Rscript /Path/to/HDL/HDL.L.data.wrangling.R \
 gwas.file=/Path/to/gwas/data/datafile \
 LD.path=/Path/to/LD.path/ \
@@ -57,11 +57,41 @@ output.file=/Path/to/gwas/gwas1 \
 log.file=/Path/to/log/gwas1
 ```
 
+IF the GWAS is from other sources, you need to explicitly tell `HDL.L.data.wrangling.R` how to understand the variable names in the GWAS. Other than this, the syntax is the same as that in the previous section. For example, if your GWAS looks like this:
+```R
+##         rsid alt ref  tstat n_complete_samples     beta       se
+## 1  rs3131962   G   A 0.2187             205475 0.001004 0.004590
+## 2 rs12562034   A   G 1.0740             205475 0.005382 0.005011
+## 3 rs11240779   A   G 0.6119             205475 0.002259 0.003691
+## 4 rs57181708   G   A 1.0562             205475 0.005401 0.005114
+## 5  rs4422948   G   A 1.4893             205475 0.005368 0.003604
+## 6  rs4970383   A   C 1.3080             205475 0.004685 0.003582
+```
+
+You should use the below command to run HDL.L.data.wrangling.R
+```bash
+Rscript /Path/to/HDL/HDL.L.data.wrangling.R \
+gwas.file=/Path/to/gwas/data/datafile \
+LD.path=/Path/to/LD.path/ \
+SNP=rsid A1=alt A2=ref N=n_complete_samples Z=tstat \
+output.file=/Path/to/gwas/gwas1 \
+log.file=/Path/to/log/gwas1
+```
+
+or
+```bash
+Rscript /Path/to/HDL/HDL.L.data.wrangling.R \
+gwas.file=/Path/to/gwas/data/datafile \
+LD.path=/Path/to/LD.path/ \
+SNP=rsid A1=alt A2=ref N=n_complete_samples b=beta se=se \
+output.file=/Path/to/gwas/gwas1 \
+log.file=/Path/to/log/gwas1
+```
 
 
 ## Step 3: Running HDL.L on Each Region
 
-You can execute HDL.L on the entire genome or on specific regions to obtain results. Additionally, you have the option to set the number of cores for parallel processing. Typically, estimating all local regions takes about 1.5 hours using a single core. For more detailed information, see the example below.
+You can execute HDL.L on the entire genome or on specific regions to obtain results. It is optimized for parallel processing, allowing users to configure the execution to utilize multiple cores. When utilizing a single core, the typical computational time for analyzing all local regions is estimated at approximately 1.5 hours. Users are encouraged to exploit the parallel processing capabilities of their systems by allocating additional cores, thereby reducing the overall computation time. Detailed procedural guidance is provided in the example below.
 
 The HDL.L function takes several arguments as outlined below:
 
@@ -120,7 +150,7 @@ The piece of the genome to which the region belongs. The whole genome is divided
 
 ## Example:
 We provide a real data example from UKBB:
-```{bash eval=FALSE}
+```bash
 cd /Path/to/Your/directory/
 wget https://broad-ukb-sumstats-us-east-1.s3.amazonaws.com/round2/additive-tsvs/21001_irnt.gwas.imputed_v3.female.tsv.bgz -O 21001_irnt.gwas.imputed_v3.female.tsv.bgz
 
@@ -153,11 +183,11 @@ output.file=/Path/to/output/test.raw.gwas.Rout \
 type="WG" \
 cores=1 \
 save.path=/Path/to/save/result/
-
 ```
 
 If you only want to run on a specific region, you can run this command
-```{bash eval=FALSE}
+
+```bash
 Rscript /Path/to/HDL/HDL.L.run.R \
 gwas1.df=/Path/to/gwas/gwas1.hdl.rds \
 gwas2.df=/Path/to/gwas/gwas2.hdl.rds \
@@ -171,10 +201,11 @@ chr=1 \
 piece=147 \
 cores=1 \
 save.path=/Path/to/save/result/
-
 ```
+
 The results of HDL.L are saved in the save.path as a rda file and here is the output file:
-```{r eval=FALSE}
+
+```R
 Attaching package: ‘data.table’
 
 The following objects are masked from ‘package:dplyr’:
