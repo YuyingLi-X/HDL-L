@@ -57,7 +57,7 @@ output.file=/Path/to/gwas/gwas1 \
 log.file=/Path/to/log/gwas1
 ```
 
-IF the GWAS is from other sources, you need to explicitly tell `HDL.L.data.wrangling.R` how to understand the variable names in the GWAS. Other than this, the syntax is the same as that in the previous section. For example, if your GWAS looks like this:
+If the GWAS is from other sources, you need to explicitly tell `HDL.L.data.wrangling.R` how to understand the variable names in the GWAS. Other than this, the syntax is the same as that in the previous section. For example, if your GWAS looks like this:
 ```R
 ##         rsid alt ref  tstat n_complete_samples     beta       se
 ## 1  rs3131962   G   A 0.2187             205475 0.001004 0.004590
