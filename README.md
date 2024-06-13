@@ -2,14 +2,17 @@
 HDL-L is the local version of high-definition likelihood (HDL) (https://github.com/zhenin/HDL). It can estimate local heritability and local genetic correlation.
 Traditional global approaches focus on the average genetic correlation across the entire genome, potentially missing localized genetic signals or those with opposite directions at different loci. We have introduced a full likelihood-based method, HDL-L, to estimate local genetic correlations with high efficiency.
 
-Here, we provide a step-by-step tutorial for HDL-L and a real example at the end.
-
 ## Installation 
-HDL-L can be cloned from GitHub using the following command;
-```bash
-git clone https://github.com/YuyingLi-X/HDL-L
-cd HDL-L
+HDL-L can be easily installed from GitHub using the `remotes` package. If you don't already have `remotes` installed, the following commands will manage the installation for you:
+```R
+if (!requireNamespace("remotes", quietly = TRUE))
+    install.packages("remotes")
+
+remotes::install_github("YuyingLi-X/HDL-L")
+library(HDLL)
 ```
+
+Here, we provide a step-by-step tutorial for HDL-L and a real example at the end.
 
 ## Step 1: Reference panel and local region definition
 As with HDL, we already prepared the pre-computed reference panel and LD for each region of the European-ancestry population. You can download it from Zenodo (https://doi.org/10.5281/zenodo.11001214).
@@ -20,9 +23,39 @@ In the "LD.path", it includes
 
 In the "bim.path", it includes all bim files for local regions, which helps to clean the summary statistics data and check if there are multiallelic or duplicated SNPs
 
+### A quick start
+Below is a quick example to demonstrate how to use HDL-L with genetic data.
+```R
+# Load example GWAS summary statistics for basal metabolic rate
+data(gwas1.example)
+
+# Load example GWAS summary statistics for standing height
+data(gwas2.example)
+
+# Specify the paths to the LD and bim files
+LD.path <- "/Path/to/LD/LD.path/"
+bim.path <- "/Path/to/bim/bim.path/"
+
+# Run HDL-L analysis
+res.HDL <- HDL.L(
+  gwas1.example, gwas2.example, 
+  Trait1name = "Basal metabolic rate",  
+  Trait2name = "Standing height", 
+  LD.path = LD.path, 
+  bim.path = bim.path, 
+  chr = 1, 
+  piece = 3, 
+  N0 = 0
+)
+
+# View the results
+print(res.HDL)
+
+```
 
 ## Step 2: The format of summary statistics
-The input data file should include the following columns:  
+To analyze your data using HDLL, it is crucial to format your summary statistics correctly. Below are the required columns that your input data file must include:
+
 - `SNP`: SNP ID  
 - `A1`: Effect allele  
 - `A2`: Reference allele  
@@ -91,7 +124,7 @@ log.file=/Path/to/log/gwas1
 
 ## Step 3: Running HDL.L on Each Region
 
-You can execute HDL.L on the entire genome or on specific regions to obtain results. It is optimized for parallel processing, allowing users to configure the execution to utilize multiple cores. When utilizing a single core, the typical computational time for analyzing all local regions is estimated at approximately 1.5 hours. Users are encouraged to exploit the parallel processing capabilities of their systems by allocating additional cores, thereby reducing the overall computation time. Detailed procedural guidance is provided in the example below.
+You can execute HDL.L on the entire genome or specific regions to obtain results. It is optimized for parallel processing, allowing users to configure the execution to utilize multiple cores. When utilizing a single core, the typical computational time for analyzing all local regions is estimated at approximately 1.5 hours. Users are encouraged to exploit the parallel processing capabilities of their systems by allocating additional cores, thereby reducing the overall computation time. Detailed procedural guidance is provided in the example below.
 
 The HDL.L function takes several arguments as outlined below:
 
