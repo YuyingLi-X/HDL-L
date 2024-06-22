@@ -63,7 +63,7 @@ In the "bim.path", it includes all bim files for local regions, which helps to c
 
 
 ### Step 2: The format of summary statistics
-To analyze your data using HDLL, it is crucial to format your summary statistics correctly. Below are the required columns that your input data file must include:
+To analyze your data using HDL-L, it is crucial to format your summary statistics correctly. Below are the required columns that your input data file must include:
 
 - `SNP`: SNP ID  
 - `A1`: Effect allele  
