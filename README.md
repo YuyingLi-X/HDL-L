@@ -1,6 +1,11 @@
-# HDL-L
-HDL-L is the local version of high-definition likelihood (HDL) (https://github.com/zhenin/HDL). It can estimate local heritability and local genetic correlation.
-Traditional global approaches focus on the average genetic correlation across the entire genome, potentially missing localized genetic signals or those with opposite directions at different loci. We have introduced a full likelihood-based method, HDL-L, to estimate local genetic correlations with high efficiency.
+# HDL-L - An enhanced framework for local genetic correlation analysis
+
+## Introduction 
+HDL-L is the local version of high-definition likelihood (HDL) (https://github.com/zhenin/HDL). It is specifically tailored for local heritability and genetic correlation analysis using GWAS summary statistics. As a specialized tool, HDL-L addresses the limitations of global correlation estimates by focusing on localized genetic signals which can differ in direction and magnitude across genomic loci. 
+
+HDL-L is a full likelihood-based method, ensuring precision and computational efficiency. Notably, HDL-L achieves an approximate fifty-fold increase in computational speed compared to LAVA (Local Analysis of [co]Variant Association), facilitating more rapid analyses without sacrificing accuracy. This efficiency is critical for large-scale genomic studies where traditional methods may falter due to computational demands.
+
+HDL-L not only enhances our ability to identify shared genetic pathways but also deepens our understanding of the biological mechanisms that underpin these relationships. By integrating both local and global correlation estimates, HDL-L provides a comprehensive view of pleiotropic genetic architectures, offering insights that are essential for both theoretical research and practical applications in human genomics.
 
 ## Installation 
 HDL-L can be easily installed from GitHub using the `remotes` package. If you don't already have `remotes` installed, the following commands will manage the installation for you:
@@ -9,22 +14,14 @@ if (!requireNamespace("remotes", quietly = TRUE))
     install.packages("remotes")
 
 remotes::install_github("YuyingLi-X/HDL-L")
-library(HDLL)
+library(HDLL)  #Notice: The name of the R package without `-`
 ```
 
-Here, we provide a step-by-step tutorial for HDL-L and a real example at the end.
+## Quick vignette
+You will need the reference panel and linkage disequilibrium (LD) data for each region pertaining to the European ancestry population from the UK Biobank. Access this data at [Zenodo](https://doi.org/10.5281/zenodo.11001214).
 
-## Step 1: Reference panel and local region definition
-As with HDL, we already prepared the pre-computed reference panel and LD for each region of the European-ancestry population. You can download it from Zenodo (https://doi.org/10.5281/zenodo.11001214).
+For a detailed, step-by-step tutorial on how to conduct your analysis using HDL-L, please refer to our comprehensive guide available below.
 
-In the "LD.path", it includes 
-1. All LD files, eigenvectors, and eigen matrixes for all local regions, end by "_LDSVD.rda"
-2. Snps information in each local region: "UKB_snp_counter_imputed.RData" and "UKB_snp_list_imputed_vector.RData". 
-
-In the "bim.path", it includes all bim files for local regions, which helps to clean the summary statistics data and check if there are multiallelic or duplicated SNPs
-
-### A quick start
-Below is a quick example to demonstrate how to use HDL-L with genetic data.
 ```R
 # Load example GWAS summary statistics for basal metabolic rate
 data(gwas1.example)
@@ -53,7 +50,19 @@ print(res.HDL)
 
 ```
 
-## Step 2: The format of summary statistics
+## Tutorial
+Here, we provide a step-by-step tutorial for HDL-L and a real data example at the end. Before you begin your analysis, ensure that you have the necessary resources downloaded, so you need download reference panel and LD at first: 
+### Step 1: Reference panel and local region definition
+As with HDL, we already prepared the pre-computed reference panel and LD for each region of the European-ancestry population. You can download it from [Zenodo](https://doi.org/10.5281/zenodo.11001214).
+
+In the "LD.path", it includes 
+1. All LD files, eigenvectors, and eigen matrixes for all local regions, end by "_LDSVD.rda"
+2. Snps information in each local region: "UKB_snp_counter_imputed.RData" and "UKB_snp_list_imputed_vector.RData". 
+
+In the "bim.path", it includes all bim files for local regions, which helps to clean the summary statistics data and check if there are multiallelic or duplicated SNPs
+
+
+### Step 2: The format of summary statistics
 To analyze your data using HDLL, it is crucial to format your summary statistics correctly. Below are the required columns that your input data file must include:
 
 - `SNP`: SNP ID  
@@ -112,6 +121,7 @@ log.file=/Path/to/log/gwas1
 ```
 
 or
+
 ```bash
 Rscript /Path/to/HDL/HDL.L.data.wrangling.R \
 gwas.file=/Path/to/gwas/data/datafile \
@@ -122,7 +132,7 @@ log.file=/Path/to/log/gwas1
 ```
 
 
-## Step 3: Running HDL.L on Each Region
+### Step 3: Running HDL.L on each region
 
 You can execute HDL.L on the entire genome or specific regions to obtain results. It is optimized for parallel processing, allowing users to configure the execution to utilize multiple cores. When utilizing a single core, the typical computational time for analyzing all local regions is estimated at approximately 1.5 hours. Users are encouraged to exploit the parallel processing capabilities of their systems by allocating additional cores, thereby reducing the overall computation time. Detailed procedural guidance is provided in the example below.
 
@@ -181,7 +191,7 @@ The chromosome to which the region belongs.
 15. **piece**
 The piece of the genome to which the region belongs. The whole genome is divided into 2,476 smaller, semi-independent blocks, each defined by LD calculated by Plink. The SNP information in each local region is included in these two data sets: "UKB_snp_counter_imputed.RData" and "UKB_snp_list_imputed_vector.RData".
 
-## Example:
+## Real data example
 We provide a real data example from UKBB:
 ```bash
 cd /Path/to/Your/directory/
@@ -270,3 +280,23 @@ Analysis finished at Mon Apr 22 00:58:25 2024
 Saving results ... 
 Finished!
 ```
+
+## Citation
+If you use the HDL-L software, please cite:
+
+- Li, Y., Pawitan, Y., & Shen, X. *An enhanced framework for local genetic correlation analysis*. (2024)
+- Ning, Z., Pawitan, Y. & Shen, X. *High-definition likelihood inference of genetic correlations across human complex traits*. Nat Genet (2020).
+
+## License
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License along with this program. If not, see https://www.gnu.org/licenses/.
+
+## Contact
+- Report bugs by opening a new issue on this GitHub page.
+- Send email to the authors: [Yuying Li](mailto:yuying.li@ki.se) or [Xia Shen](mailto:shenx@fudan.edu.cn).
+
+## Future Plans
+This repository will be integrated into the HDL software in the future.
