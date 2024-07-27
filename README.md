@@ -7,6 +7,8 @@ HDL-L is a full likelihood-based method, ensuring precision and computational ef
 
 HDL-L not only enhances our ability to identify shared genetic pathways but also deepens our understanding of the biological mechanisms that underpin these relationships. By integrating both local and global correlation estimates, HDL-L provides a comprehensive view of pleiotropic genetic architectures, offering insights that are essential for both theoretical research and practical applications in human genomics.
 
+Here is the preprint version of our paper: https://www.researchsquare.com/article/rs-4568593/v1
+
 ## Installation 
 HDL-L can be easily installed from GitHub using the `remotes` package. If you don't already have `remotes` installed, the following commands will manage the installation for you:
 ```R
