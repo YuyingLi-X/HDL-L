@@ -50,7 +50,7 @@ This simulation pipeline is designed to generate synthetic genetic data and perf
 
 ### Data Files
 
-- **Sample `X0` Data**: Two sample `X0` data files are provided in HDL-L/data/Simulationdata directory for testing purposes.
+- **Sample `X0` Data**: Two sample `X0` data files are provided in HDL-L/data directory for testing purposes.
 - **LD Files**: Download required LD files following HDL-L instructions.
 - **SNP Information**: Obtain SNP information files.
 - **bim Files**: Ensure bim files corresponding to the genotype data are available.
