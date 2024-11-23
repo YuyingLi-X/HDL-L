@@ -57,12 +57,13 @@ Here, we provide a step-by-step tutorial for HDL-L and a real data example at th
 ### Step 1: Reference panel and local region definition
 As with HDL, we already prepared the pre-computed reference panel and LD for each region of the European-ancestry population. You can download it from [Zenodo](https://doi.org/10.5281/zenodo.11001214).
 
-In the "LD.path", it includes 
-1. All LD files, eigenvectors, and eigen matrixes for all local regions, end by "_LDSVD.rda"
-2. Snps information in each local region: "UKB_snp_counter_imputed.RData" and "UKB_snp_list_imputed_vector.RData". 
+In the "LD.path", it includes LD files, eigenvectors, and eigen matrixes for all local regions, end by "_LDSVD.rda"
 
-In the "bim.path", it includes all bim files for local regions, which helps to clean the summary statistics data and check if there are multiallelic or duplicated SNPs
+In the "bim.path", it includes bim files for local regions, which helps to clean the summary statistics data and check if there are multiallelic or duplicated SNPs
 
+In addition to the existing HDL-L reference panel, we have developed a new LD reference panel specifically tailored for cis-protein quantitative trait loci (cis-pQTL) analysis. This new panel was constructed using data from the Olink Proteomics proximity extension assay (PEA), focusing on approximately 3,000 proteins in the Olink® Explore panel. It can be downloaded from [Zenodo](https://zenodo.org/records/14209926).
+
+If you want to build a reference panel for your predefined loci, you can use compute_ld_eigen.R
 
 ### Step 2: The format of summary statistics
 To analyze your data using HDL-L, it is crucial to format your summary statistics correctly. Below are the required columns that your input data file must include:
