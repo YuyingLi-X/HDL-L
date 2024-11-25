@@ -15,12 +15,13 @@
 #' @param Nref Sample size of the reference sample where LD is computed. If the default UK Biobank reference sample is used, Nref = 335272
 #' @param N0 Number of individuals included in both cohorts. 
 #' @param output.file Where the log and results should be written. If you do not specify a file, the log will be printed on the console.
-#' @param eigen.cut Specifies which eigenvalues and eigenvectors in each LD score matrix should be used for HDL. The default value is 0.95. Users are allowed to specify a numeric value between 0 and 1 for eigen.cut.
+#' @param eigen.cut Specifies which eigenvalues and eigenvectors in each LD score matrix should be used for HDL. The default value is 0.99. Users are allowed to specify a numeric value between 0 and 1 for eigen.cut.
 #' @param intercept.output Logical, FALSE by default. Should the intercept terms be included in estimates.df?
 #' @param fill.missing.N If NULL (default), the SNPs with missing N are removed. One of "median", "min" or "max" can be given so that the missing N will be filled accordingly. For example, "median" means the missing N are filled with the median N of the SNPs with available N.
 #' @param lim Tolerance limitation, default lim = exp(-18). 
 #' @param chr The chromosome to which the region belongs.
-#' @param piece The piece of the genome to which the region belongs. The whole genome is divided into 2,476 smaller, semi-independent blocks, each defined by LD calculated by Plink. The SNP information in each local region is included in these two data sets: "UKB_snp_counter_imputed.RData" and "UKB_snp_list_imputed_vector.RData".
+#' @param piece The piece of the genome to which the region belongs. The whole genome is divided into 2,468 smaller, semi-independent blocks, each defined by LD calculated by Plink. The SNP information in each local region is included in these two data sets: "UKB_snp_counter_imputed.RData" and "UKB_snp_list_imputed_vector.RData".
+#' @param alpha The significance level used to compute the cut-off value 'c' for the likelihood-based confidence interval (LCI). The cut-off 'c' is calculated using the formula: c = exp(-qchisq(1 - alpha, 1) / 2). For example, when alpha = 0.05, it corresponds to a 95% LCI.
 #' @note Users can download the precomputed eigenvalues and eigenvectors of LD correlation matrices for European ancestry population. The download link can be found at https://doi.org/10.5281/zenodo.11001214
 #' These are the LD matrices and their eigen-decomposition from 335,272 genomic British UK Biobank individuals. 
 #' 
@@ -46,7 +47,7 @@
 #' 
 
 
-HDL.L <-function(gwas1.df, gwas2.df, Trait1name, Trait2name, LD.path, bim.path, Nref = 335272, N0, output.file = "", eigen.cut = 0.95, intercept.output = FALSE, fill.missing.N = NULL, lim = exp(-18), chr, piece){
+HDL.L <-function(gwas1.df, gwas2.df, Trait1name, Trait2name, LD.path, bim.path, Nref = 335272, N0, output.file = "", eigen.cut = 0.99, intercept.output = FALSE, fill.missing.N = NULL, lim = exp(-18), chr, piece, alpha = 0.05){
     
     if(output.file != ""){
       if(file.exists(output.file) == T){
@@ -133,21 +134,12 @@ llfun0.gcov.part.2 = function(int,h11,h22,rho12, M, N1, N2, N0, Nref,
 
 
     # Load SNP list and counter files with error handling
-    snp_list_file <- paste0(LD.path, "UKB_snp_list_imputed_vector.RData")
-    snp_counter_file <- paste0(LD.path, "UKB_snp_counter_imputed.RData")
-    # Load the LD file if found
-    if (!is.null(snp_list_file)||!is.null(snp_counter_file)) {
-        load(snp_list_file)
-        load(snp_counter_file)
-    } else {
-        stop("No snp informations' files found in LD.path.")
-}
-
+    load(paste0(LD.path, "HDLL_LOC_snps.RData"))
 
 # Function to find LD RData file based on chromosome (chr) and piece
 find_LD_rda_file <- function(LD.files, chr, piece) {
-  pattern1 <- paste0(chr, "ukb_", chr, "\\.", piece, "[\\._]*_LDSVD.rda$")
-  pattern2 <- paste0("ukb_", chr, "\\.", piece, "[\\._].*_LDSVD.rda$")
+  pattern1 <- paste0("ukb_chr", chr, "\\.", piece, ".*_LDSVD\\.rda$")
+  pattern2 <- paste0("ukb_", chr, "\\.", piece, ".*_LDSVD\\.rda$")
   
   # Try the first pattern
   LD_rda_file <- LD.files[grep(x = LD.files, pattern = pattern1)]
@@ -178,32 +170,6 @@ if (!is.null(LD_rda_file)) {
   stop("No matching LD file found in LD.path.")
 }
 
-
-## Get the SNPs name ##
-# Function to get SNP names for a given sublist and element index
-get_snp_names <- function(chr, piece, snps_vector, nsnps_list) {
-  # Calculate the start index of each locus in the chromosome
-  start_indices <- c(1, head(cumsum(nsnps_list[[chr]]) + 1, -1))
-  # Calculate the end index of each locus in the chr
-  end_indices <- cumsum(nsnps_list[[chr]])
-  
-  # Get the start and end indices for the requested locus
-  start_index <- start_indices[piece]
-  end_index <- end_indices[piece]
-  
-  # Adjust indices based on the cumulative sum of previous chrs, if applicable
-  if(chr > 1) {
-    prev_chrs_length <- sum(sapply(nsnps_list[1:(chr-1)], sum))
-    start_index <- start_index + prev_chrs_length
-    end_index <- end_index + prev_chrs_length
-  }
-  
-  # Extract and return the SNP names
-  snps_vector[start_index:end_index]
-}
-
-chrnum = as.numeric(gsub("chr","",chr))
-snps.name.list <- snps.ref <- get_snp_names(chrnum, piece, snps.list.imputed.vector, nsnps.list.imputed)
 
     bim.files <- list.files(bim.path)
 
@@ -344,8 +310,7 @@ if(length(LD_bim_file)==0){
     p1 <- N0/N1
     p2 <- N0/N2
     
-    rho12 <- suppressWarnings(inner_join(gwas1.df %>% select(SNP, Z), gwas2.df %>% select(SNP, Z), by = "SNP") %>%
-                                summarise(x=cor(Z.x, Z.y, use = "complete.obs")) %>% unlist)
+  rho12 <- suppressWarnings(inner_join(gwas1.df %>% select(SNP, Z) %>% filter(abs(Z)<8), gwas2.df %>% select(SNP, Z) %>% filter(abs(Z)<8), by = "SNP") %>% summarise(x=cor(Z.x, Z.y, use = "complete.obs")) %>% unlist)
     
     bstar1.v <- bstar2.v <- lam.v <- list()
         
@@ -561,7 +526,7 @@ if (!converged | h22.hdl.cut[1] < 0 | h22.hdl.cut[1] > 1) {
 if (h11 <= 0 | h22 <= 0) {
    h12 = NA
    int = NA
-   rg = 0
+   rg = NA
    rg.lower = rg.upper = NA
   ll_alt.h12 = NA
   ll_alt.h12conv = NA
@@ -578,8 +543,7 @@ for (start_val_1 in starting_values_1) {
   for (start_val_2 in starting_values_2) {
     for (n_deps in ndeps_values) {
       # Perform the optimization with the current set of starting values and n_deps
-     opt <- optim(c(start_val_1, start_val_2), llfun.gcov.part.2, h11 = h11.hdl.use, h22 = h22.hdl.use,rho12 = rho12, M = M.ref, N1 = N1, N2 = N2, N0 = N0, Nref = Nref, lam1 = unlist(lam.v.use), lam2 = unlist(lam.v.use), bstar1 = unlist(bstar1.v.use), bstar2 = unlist(bstar2.v.use), lim = lim, method = 'L-BFGS-B', lower = c(-1, -20), upper = c(1, 20), control = list(factr = 1e-8, maxit = 1000, trace = 0, ndeps = c(n_deps, n_deps * 100), fnscale = -1))
-     #opt <- optim(c(start_val_1, start_val_2), llfun.gcov.part.2, h11 = h11.hdl.use, h22 = h22.hdl.use,rho12 = rho12, M = M.ref, N1 = N1, N2 = N2, N0 = N0, Nref = Nref, lam1 = unlist(lam.v.use), lam2 = unlist(lam.v.use), bstar1 = unlist(bstar1.v.use), bstar2 = unlist(bstar2.v.use), lim = lim, method = 'L-BFGS-B', lower = c(-sqrt(h11* h22), -20), upper = c(sqrt(h11* h22), 20), control = list(factr = 1e-8, maxit = 1000, trace = 0, ndeps = c(n_deps, n_deps * 100), fnscale = -1))
+     opt <- optim(c(start_val_1, start_val_2), llfun.gcov.part.2, h11 = h11.hdl.use, h22 = h22.hdl.use,rho12 = rho12, M = M.ref, N1 = N1, N2 = N2, N0 = N0, Nref = Nref, lam1 = unlist(lam.v.use), lam2 = unlist(lam.v.use), bstar1 = unlist(bstar1.v.use), bstar2 = unlist(bstar2.v.use), lim = lim, method = 'L-BFGS-B', lower = c(-sqrt(h11* h22), -20), upper = c(sqrt(h11* h22), 20), control = list(factr = 1e-8, maxit = 1000, trace = 0, ndeps = c(n_deps, n_deps * 100), fnscale = -1))
       opt0 <- optim(start_val_2, llfun0.gcov.part.2, h11=h11.hdl.use, h22=h22.hdl.use, rho12=rho12, M=M.ref, N1=N1, N2=N2, N0=N0, Nref=Nref, lam1=unlist(lam.v.use), lam2=unlist(lam.v.use),bstar1=unlist(bstar1.v.use), bstar2=unlist(bstar2.v.use),lim=lim, method ='L-BFGS-B', lower=-20, upper=20,control=list(factr = 1e-8, maxit = 1000,trace=0,ndeps=n_deps*100,fnscale=-1))                   
       
       # Check if this result is the best so far, based on value and convergence
@@ -631,7 +595,7 @@ if(converged == FALSE){
     if(h11.LCI == 0 | h22.LCI == 0){
       h11 = h11.LCI
       h22 = h22.LCI
-      rg = 0
+      rg = NA
       rg.lower = rg.upper = NA
     }else{
     h12_val = seq(-1*sqrt(h11.LCI* h22.LCI), 1*sqrt(h11.LCI* h22.LCI), length = 10000)
@@ -643,7 +607,7 @@ if(converged == FALSE){
     h12.LCI = h12_val[which.max(ll_values)]
     likelihoods <- exp(ll_values - max(ll_values)) 
     ###1. get confidence interval by wilks statistic ratio
-    alpha =0.05
+    alpha = alpha
     c <- exp(-qchisq(1 - alpha, 1) / 2)
     l_loc = which(likelihoods > c)
     h12_CI = h12_val[l_loc]
@@ -780,5 +744,3 @@ if(!is.na(error.message.rg)){
   )
      return(result.df)
     }
-
-  
