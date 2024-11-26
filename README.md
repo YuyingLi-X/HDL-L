@@ -20,8 +20,6 @@ library(HDLL)  #Notice: The name of the R package without `-`
 ```
 This installation process only takes a few minutes.
 
-3. Demo
-Instructions
 
 ## Quick vignette
 You will need the reference panel and linkage disequilibrium (LD) data for each region pertaining to the European ancestry population from the UK Biobank. Access this data at [Zenodo](https://doi.org/10.5281/zenodo.11001214).
