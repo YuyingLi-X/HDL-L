@@ -9,6 +9,19 @@ HDL-L not only enhances our ability to identify shared genetic pathways but also
 
 Here is the preprint version of our paper: https://www.researchsquare.com/article/rs-4568593/v1
 
+## System Requirements
+HDL-L requires only a standard computer with enough RAM to support the in-memory operations.
+
+### Software requirements
+**OS Requirements**
+This package is supported for macOS and Linux. 
+**R Requirements**
+R Dependencies: 
+```R
+dplyr
+data.table
+```
+
 ## Installation 
 HDL-L can be easily installed from GitHub using the `remotes` package. If you don't already have `remotes` installed, the following commands will manage the installation for you:
 ```R
@@ -24,7 +37,7 @@ This installation process only takes a few minutes.
 ## Quick vignette
 You will need the reference panel and linkage disequilibrium (LD) data for each region pertaining to the European ancestry population from the UK Biobank. Access this data at [Zenodo](https://doi.org/10.5281/zenodo.11001214).
 
-For a detailed, step-by-step tutorial on how to conduct your analysis using HDL-L, please refer to our comprehensive guide available below.
+For a detailed, step-by-step tutorial on how to conduct your analysis using HDL-L, please refer to our comprehensive guide available below. This demo only takes a few minutes.
 
 ```R
 # Load example GWAS summary statistics for basal metabolic rate
