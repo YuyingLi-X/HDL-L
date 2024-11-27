@@ -22,6 +22,7 @@ R Dependencies:
 ```R
 dplyr
 data.table
+tidyverse
 ```
 
 ## Installation 
@@ -42,6 +43,11 @@ You will need the reference panel and linkage disequilibrium (LD) data for each 
 For a detailed, step-by-step tutorial on how to conduct your analysis using HDL-L, please refer to our comprehensive guide available below. This demo only takes a few minutes.
 
 ```R
+# Load required libraries
+library(dplyr)
+library(data.table)
+library(tidyverse)
+
 # Load example GWAS summary statistics for basal metabolic rate
 data(gwas1.example)
 
