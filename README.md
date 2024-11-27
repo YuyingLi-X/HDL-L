@@ -13,8 +13,10 @@ Here is the preprint version of our paper: https://www.researchsquare.com/articl
 HDL-L requires only a standard computer with enough RAM to support the in-memory operations.
 
 ### Software requirements
+
 **OS Requirements**
 This package is supported for macOS and Linux. 
+
 **R Requirements**
 R Dependencies: 
 ```R
