@@ -1,5 +1,13 @@
 # HDL-L - An enhanced framework for local genetic correlation analysis
 
+> **Note:** HDL-L is now fully integrated into the main [HDL GitHub repository](https://github.com/zhenin/HDL).
+
+For **detailed instructions**, usage examples, and an **interactive R tutorial**, please refer to the Wiki page:  
+👉 [Example of HDL‐L for Local Genetic Correlation Analysis](https://github.com/zhenin/HDL/wiki/Example-of-HDL%E2%80%90L-for-local-genetic-correlation-analysis#system-requirements)
+
+Both **command-line execution** and **R-based workflows** are supported.
+
+
 ## Introduction 
 HDL-L is the local version of high-definition likelihood (HDL) (https://github.com/zhenin/HDL). It is specifically tailored for local heritability and genetic correlation analysis using GWAS summary statistics. As a specialized tool, HDL-L addresses the limitations of global correlation estimates by focusing on localized genetic signals which can differ in direction and magnitude across genomic loci. 
 
